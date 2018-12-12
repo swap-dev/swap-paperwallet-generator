@@ -90,46 +90,110 @@
 /* Wallet generator modifications: Copyright 2015 moneromooo */
 
 -->
-<!-- swap Paper Wallet Generator -->
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=windows-1252"></head><body><div class="row">
-	<h3><span tkey="paperWallet">Paper Wallet Generator</span></h3>
-	<div class="card padding-15 padding-b-10" tkey="paperWalletDesc">
-		This page generates a new swap wallet address that can be imported into the GUI/CLI wallet.<br>
-		Be sure to keep a record of this page in a safe place before mining to this wallet address!
-	</div>
-	
-	<h4 class="push-up-15"><span tkey="walletAddress">Wallet Address:<span></span></span></h4>
-	<div class="card padding-15 padding-b-10">
-		<code><span id="address_widget">fh2cwUHoeoJf2175km5e2mG8jEy2MPRndSKb357URxs6TPaPaUovzPQdti6fVWghZWRWAkxfQTck24A8BQcn7hJo31GUCEM5m</span></code>
-		<span class="qrcode" id="address_qr_widget" onclick="js:toggle_qr();"></span>
-	</div>
-	
-	<h4 class="push-up-15"><span tkey="privateSpendKey">Private Spend Key:<span></span></span></h4>
-	<div class="card padding-15 padding-b-10">
-		<code><span id="spend_key_widget">9e5465d39ea751002c715197ae3424700b0737fe976b909ad5904466b8f2ce00</span></code><br>
-	</div>
+<!-- CSS -->
+<!-- Swap Paper Wallet Generator -->
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+  <style>
+    body {  
+      background-color: #d3d3d3;
+      font-family: 'Roboto', Helvetica, Arial, sans-serif;
+      line-height: 1.428571429;
+      color: #262626;
+      margin: 0;
+      padding: 0;
+      margin-bottom: 85px;
+      font-size: 16px;
+      overflow-y: scroll;
+    }
+    
+    h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      font-family: 'Roboto Condensed', Arial, sans-serif;
+    }
+    h3,.h3 {
+      font-size: 32px;
+      margin-bottom: 14px;
+    }
 
-	<h4 class="push-up-15"><span tkey="privateViewKeys">Private View Key:<span></span></span></h4>
-	<div class="card padding-15 padding-b-10">
-		<code><span id="view_key_widget">e6472ce7df40a3d095c626e1c109ad86659ba8db4b1bd3bf54965672afd6df01</span></code>
-	</div>
-	
-	<h4 class="push-up-15"><span tkey="mnemonicSeed">Mnemonic Seed:<span></span></span></h4>
-	<div class="card padding-15 padding-b-10">
-		<code><div style="white-space: pre-line; word-break: break-word;" id="mnemonic_widget">gimmick smuggled oozed being bowling boyfriend exhale library avoid koala axle match academy dads criminal tuxedo randomly foamy tadpoles smuggled deity apart dazed deftly tuxedo</div></code>
-	</div>
+    .card {
+      display: inline-block;
+      position: relative;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      box-shadow: 0 1px 0px 0 rgba(0, 0, 0, 0.14);
+      border-radius: 3px;
+      color: rgba(0, 0, 0, 0.87);
+      background: #fff;
+    }
 
-	<h4 class="push-up-15"><span tkey="generateWallet">Generate New Wallet:<span></span></span></h4>
-	<div class="card padding-15 padding-b-10">
-		<div>Enter a random string for custom entropy (leave empty to use the browser's PRNG)</div><br>
-		<input class="form-control" type="text" id="user_entropy_widget" oninput="js:checkEntropy();"><br>
-		<button class="btn btn-default" type="button" onclick="js:genwallet(null);">
-			<span><i class="fa fa-history"></i>&nbsp; <span tkey="set">New Wallet</span></span>
-		</button>
-		<div style="color: #ffbfc5; display: none" id="user_entropy_warning_widget">WARNING: entropy is way too low for the wallet to be secure: aim for 256 bits (about a hundred dice throws)</div>
-	</div>
-</div>
+    .padding-15 { padding: 15px !important; }
+    .padding-b-10 { padding-bottom: 10px !important; }
+    .push-up-15 { margin-top: 15px !important; }
+    
+    #wrapper {
+      width: 100%;
+    }
+    #page-wrapper {
+      padding: 0 15px;
+      min-height: 568px;
+    }    
+      .btn-default {
+        color: #ffffff;
+        background-color: #1a4b63;
+        border-color: #014e71;
+    }
+  </style>
+</head>
+<body>
+  <div class="row">
+    <div id="wrapper">
+      <div id="page-wrapper">
+        <div id="page">
+          <h3><span>Paper Wallet Generator</span></h3>
+          <div class="card padding-15 padding-b-10">
+            This page generates a new Swap wallet address that can be imported into the GUI/CLI wallet.<br>
+            Be sure to keep a record of this page in a safe place before mining to this wallet address!
+          </div>
+          
+          <h4 class="push-up-15"><span>Wallet Address:<span></span></span></h4>
+          <div class="card padding-15 padding-b-10">
+            <code><span id="address_widget">generating...</span></code>
+            <span class="qrcode" id="address_qr_widget" onclick="js:toggle_qr();"></span>
+          </div>
+          
+          <h4 class="push-up-15"><span>Private Spend Key:<span></span></span></h4>
+          <div class="card padding-15 padding-b-10">
+            <code><span id="spend_key_widget">generating...</span></code><br>
+          </div>
+
+          <h4 class="push-up-15"><span>Private View Key:<span></span></span></h4>
+          <div class="card padding-15 padding-b-10">
+            <code><span id="view_key_widget">generating...</span></code>
+          </div>
+          
+          <h4 class="push-up-15"><span>Mnemonic Seed:<span></span></span></h4>
+          <div class="card padding-15 padding-b-10">
+            <code><div style="white-space: pre-line; word-break: break-word;" id="mnemonic_widget">generating...</div></code>
+          </div>
+
+          <h4 class="push-up-15"><span>Generate New Wallet:<span></span></span></h4>
+          <div class="card padding-15 padding-b-10">
+            <div>Enter a random string for custom entropy (leave empty to use the browser's PRNG)</div><br>
+            <input class="form-control" type="text" id="user_entropy_widget" oninput="js:checkEntropy();"><br>
+            <button class="btn btn-default" type="button" onclick="js:genwallet(null);">
+              <span tkey="set">New Wallet</span>
+            </button>
+            <div style="color: #ffbfc5; display: none" id="user_entropy_warning_widget">WARNING: entropy is way too low for the wallet to be secure: aim for 256 bits (about a hundred dice throws)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
 		
 <!-- Javascript -->
 <script>
